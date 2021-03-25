@@ -9,6 +9,9 @@ import 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 
+import SignIn from './components/SignIn'
+import SignOut from './components/SignOut'
+
 
 
 if (!firebase.apps.length) {
@@ -55,28 +58,6 @@ function DisplayUserInfo(props){
       displayName: {user.displayName}<br/>
       email: {user.email}<br/>
     </>
-  )
-}
-
-function SignIn() {
-
-  const signInWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider);
-  }
-
-  return (
-    <>
-      <button className="sign-in" onClick={signInWithGoogle}>Sign in with Google</button>
-      <p>Do not violate the community guidelines or you will be banned for life!</p>
-    </>
-  )
-
-}
-
-function SignOut() {
-  return auth.currentUser && (
-    <button className="sign-out" onClick={() => auth.signOut()}>Sign Out</button>
   )
 }
 
