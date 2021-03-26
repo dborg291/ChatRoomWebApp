@@ -35,10 +35,14 @@ function App() {
         <SignOut auth={auth} />
       </header>
       <section>
-        {user ? <LoadChatRooms /> : <SignIn auth={auth} firebase={firebase} />}
-      </section>
-      <section>
-        <NewChatRoomForm />
+        {user ? (
+          <>
+            <LoadChatRooms />
+            <NewChatRoomForm />
+          </>
+        ) : (
+          <SignIn auth={auth} firebase={firebase} />
+        )}
       </section>
     </div>
   );
