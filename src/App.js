@@ -5,18 +5,19 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
+import constants from './constants';
 
 import SignIn from './components/SignIn';
 import SignOut from './components/SignOut';
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
-    apiKey: 'AIzaSyDqe7nz6R-RLusOkFPAyD5v78_1w3a-ELg',
-    authDomain: 'chatroomwebapp.firebaseapp.com',
-    projectId: 'chatroomwebapp',
-    storageBucket: 'chatroomwebapp.appspot.com',
-    messagingSenderId: '639511985569',
-    appId: '1:63951198556yarn 9:web:710a3684dd3c4cfed69fe0',
+    apiKey: constants.apiKey,
+    authDomain: constants.authDomain,
+    projectId: constants.projectId,
+    storageBucket: constants.storageBucket,
+    messagingSenderId: constants.messagingSenderId,
+    appId: constants.appId,
   });
 } else {
   firebase.app(); // if already initialized, use that one
