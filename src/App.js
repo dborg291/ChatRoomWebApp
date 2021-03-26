@@ -51,7 +51,7 @@ function App() {
 }
 
 function NewChatRoomForm() {
-  const [formValue, setFormValue] = useState('');
+  const [roomName, setRoomName] = useState('');
 
   const createNewChatRoom = async (e) => {
     const { uid, displayName } = auth.currentUser;
@@ -59,22 +59,23 @@ function NewChatRoomForm() {
     e.preventDefault();
 
     await chatRoomsRef.add({
-      name: formValue,
+      name: roomName,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       creator: {
         uid,
         displayName,
       },
       users: [uid],
+      messages: [],
     });
 
-    setFormValue('');
+    setRoomName('');
   };
 
   return (
     <form onSubmit={createNewChatRoom}>
       <h4>Create New Chat Room</h4>
-      <input value={formValue} onChange={(e) => setFormValue(e.target.value)} />
+      <input value={roomName} onChange={(e) => setRoomName(e.target.value)} />
       <button type="submit">Create Room</button>
     </form>
   );
@@ -100,31 +101,94 @@ function ChatRoom(props) {
     console.log('Joinging room: ' + id);
     const { uid } = auth.currentUser;
     const chatRoomRef = firestore.collection('chatRooms').doc(id);
-    await chatRoomRef.set(
+    await chatRoomRef.update(
       {
-        users: [uid],
+        users: firebase.firestore.FieldValue.arrayUnion(uid),
       },
       { merge: true }
     );
   };
 
   return (
-    <Card style={{ width: '18rem' }}>
-      <Card.Body>
-        <Card.Title>{name}</Card.Title>
-        <Card.Subtitle className="mb-2 text-muted">
-          Created By: {creator.displayName}
-        </Card.Subtitle>
-        <Card.Text>Some for of description</Card.Text>
-        {users.includes(uid) ? (
-          'Already a member of the room.'
-        ) : (
-          <Button variant="primary" onClick={() => joinRoom(id)}>
-            Join
-          </Button>
+    <>
+      <Card style={{ width: '18rem' }}>
+        <Card.Body>
+          <Card.Title>{name}</Card.Title>
+          <Card.Subtitle className="mb-2 text-muted">
+            Created By: {creator.displayName}
+          </Card.Subtitle>
+          <Card.Text>Some for of description</Card.Text>
+          {users.includes(uid) ? (
+            'Already a member of the room.'
+          ) : (
+            <Button variant="primary" onClick={() => joinRoom(id)}>
+              Join
+            </Button>
+          )}
+        </Card.Body>
+      </Card>
+      <LoadMessages roomInfo={props.roomInfo} />
+      <SendMessage roomInfo={props.roomInfo} />
+    </>
+  );
+}
+
+function SendMessage(props) {
+  const { name, id } = props.roomInfo;
+  const [message, setMessage] = useState('');
+
+  const createMessage = async (e) => {
+    const { uid, displayName } = auth.currentUser;
+    const messagesRef = firestore.collection('messages');
+    e.preventDefault();
+
+    await messagesRef
+      .add({
+        text: message,
+        author: {
+          uid,
+          displayName,
+        },
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        roomId: id,
+      })
+      .then(async (result) => {
+        const chatRoomsRef = firestore.collection('chatRooms').doc(id);
+        await chatRoomsRef.update({
+          messages: firebase.firestore.FieldValue.arrayUnion(result.id),
+        });
+      });
+
+    setMessage('');
+  };
+
+  return (
+    <form onSubmit={createMessage}>
+      <h4>Send Message to: {name}</h4>
+      <input value={message} onChange={(e) => setMessage(e.target.value)} />
+      <button type="submit">Send</button>
+    </form>
+  );
+}
+
+function LoadMessages(props) {
+  const { id } = props.roomInfo;
+  const messagesRef = firestore.collection('messages');
+  const query = messagesRef.orderBy('createdAt');
+  const [messages] = useCollectionData(query, { idField: 'id' });
+
+  return (
+    <>
+      {messages &&
+        messages.map((message) =>
+          message.roomId === id ? (
+            <>
+              {message.text}
+              <br />
+            </>
+          ) : null
         )}
-      </Card.Body>
-    </Card>
+    </>
   );
 }
 
