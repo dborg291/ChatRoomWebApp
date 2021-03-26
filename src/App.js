@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -35,15 +35,44 @@ function App() {
         <SignOut auth={auth} />
       </header>
       <section>
-        {user ? <CreateChatRoom /> : <SignIn auth={auth} firebase={firebase} />}
+        {user ? <LoadChatRooms /> : <SignIn auth={auth} firebase={firebase} />}
+      </section>
+      <section>
+        <NewChatRoomForm />
       </section>
     </div>
   );
 }
 
-function CreateChatRoom() {
-  const messagesRef = firestore.collection('chatRooms');
-  const query = messagesRef.orderBy('createdAt').limit(25);
+function NewChatRoomForm() {
+  const [formValue, setFormValue] = useState('');
+
+  const createNewChatRoom = async (e) => {
+    const { uid } = auth.currentUser;
+    const chatRoomsRef = firestore.collection('chatRooms');
+    e.preventDefault();
+
+    await chatRoomsRef.add({
+      name: formValue,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      uid,
+    });
+
+    setFormValue('');
+  };
+
+  return (
+    <form onSubmit={createNewChatRoom}>
+      <h4>Room Name</h4>
+      <input value={formValue} onChange={(e) => setFormValue(e.target.value)} />
+      <button type="submit">Create Room</button>
+    </form>
+  );
+}
+
+function LoadChatRooms() {
+  const chatRoomsRef = firestore.collection('chatRooms');
+  const query = chatRoomsRef.orderBy('createdAt').limit(25);
   const [chatRooms] = useCollectionData(query, { idField: 'id' });
 
   return (
