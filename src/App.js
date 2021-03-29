@@ -99,7 +99,6 @@ function ChatRoom(props) {
   const { uid } = auth.currentUser;
   const joinRoom = async (id) => {
     console.log('Joinging room: ' + id);
-    const { uid } = auth.currentUser;
     const chatRoomRef = firestore.collection('chatRooms').doc(id);
     await chatRoomRef.update(
       {
@@ -172,14 +171,16 @@ function SendMessage(props) {
 }
 
 function LoadMessages(props) {
-  const { id } = props.roomInfo;
+  const { id, users } = props.roomInfo;
+  const { uid } = auth.currentUser;
   const messagesRef = firestore.collection('messages');
   const query = messagesRef.orderBy('createdAt');
   const [messages] = useCollectionData(query, { idField: 'id' });
 
   return (
     <>
-      {messages &&
+      {users.includes(uid) &&
+        messages &&
         messages.map((message) =>
           message.roomId === id ? (
             <>
