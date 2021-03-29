@@ -4,11 +4,12 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
 import constants from './constants';
 
-import SignIn from './components/SignIn';
-import SignOut from './components/SignOut';
+import SignIn from './components/auth/SignIn';
+import SignOut from './components/auth/SignOut';
+import NewChatRoomForm from './components/chatRoom/NewChatRoomForm';
+import LoadChatRooms from './components/chatRoom/LoadChatRooms';
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
@@ -35,29 +36,26 @@ function App() {
         <SignOut auth={auth} />
       </header>
       <section>
-        {user ? <CreateChatRoom /> : <SignIn auth={auth} firebase={firebase} />}
+        {user ? (
+          <>
+            <h4>Current Chat Rooms</h4>
+            <LoadChatRooms
+              auth={auth}
+              firebase={firebase}
+              firestore={firestore}
+            />
+            <NewChatRoomForm
+              auth={auth}
+              firebase={firebase}
+              firestore={firestore}
+            />
+          </>
+        ) : (
+          <SignIn auth={auth} firebase={firebase} />
+        )}
       </section>
     </div>
   );
-}
-
-function CreateChatRoom() {
-  const messagesRef = firestore.collection('chatRooms');
-  const query = messagesRef.orderBy('createdAt').limit(25);
-  const [chatRooms] = useCollectionData(query, { idField: 'id' });
-
-  return (
-    <>
-      {chatRooms &&
-        chatRooms.map((room) => <ChatRoom key={room.id} roomInfo={room} />)}
-    </>
-  );
-}
-
-function ChatRoom(props) {
-  const { name } = props.roomInfo;
-
-  return <p>{name}</p>;
 }
 
 export default App;
