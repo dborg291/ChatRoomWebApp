@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import { Button, Card } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
 import constants from './constants';
 
-import SignIn from './components/SignIn';
-import SignOut from './components/SignOut';
+import SignIn from './components/auth/SignIn';
+import SignOut from './components/auth/SignOut';
+import NewChatRoomForm from './components/chatRoom/NewChatRoomForm';
+import LoadChatRooms from './components/chatRoom/LoadChatRooms';
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
@@ -39,8 +39,16 @@ function App() {
         {user ? (
           <>
             <h4>Current Chat Rooms</h4>
-            <LoadChatRooms />
-            <NewChatRoomForm />
+            <LoadChatRooms
+              auth={auth}
+              firebase={firebase}
+              firestore={firestore}
+            />
+            <NewChatRoomForm
+              auth={auth}
+              firebase={firebase}
+              firestore={firestore}
+            />
           </>
         ) : (
           <SignIn auth={auth} firebase={firebase} />
@@ -50,147 +58,116 @@ function App() {
   );
 }
 
-function NewChatRoomForm() {
-  const [roomName, setRoomName] = useState('');
+// function LoadChatRooms() {
+//   const chatRoomsRef = firestore.collection('chatRooms');
+//   const query = chatRoomsRef.orderBy('createdAt').limit(25);
+//   const [chatRooms] = useCollectionData(query, { idField: 'id' });
 
-  const createNewChatRoom = async (e) => {
-    const { uid, displayName } = auth.currentUser;
-    const chatRoomsRef = firestore.collection('chatRooms');
-    e.preventDefault();
+//   return (
+//     <>
+//       {chatRooms &&
+//         chatRooms.map((room) => <ChatRoom key={room.id} roomInfo={room} />)}
+//     </>
+//   );
+// }
 
-    await chatRoomsRef.add({
-      name: roomName,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      creator: {
-        uid,
-        displayName,
-      },
-      users: [uid],
-      messages: [],
-    });
+// function ChatRoom(props) {
+//   const { name, creator, id, users } = props.roomInfo;
+//   const { uid } = auth.currentUser;
+//   const joinRoom = async (id) => {
+//     console.log('Joinging room: ' + id);
+//     const chatRoomRef = firestore.collection('chatRooms').doc(id);
+//     await chatRoomRef.update(
+//       {
+//         users: firebase.firestore.FieldValue.arrayUnion(uid),
+//       },
+//       { merge: true }
+//     );
+//   };
 
-    setRoomName('');
-  };
+//   return (
+//     <>
+//       <Card style={{ width: '18rem' }}>
+//         <Card.Body>
+//           <Card.Title>{name}</Card.Title>
+//           <Card.Subtitle className="mb-2 text-muted">
+//             Created By: {creator.displayName}
+//           </Card.Subtitle>
+//           <Card.Text>Some for of description</Card.Text>
+//           {users.includes(uid) ? (
+//             'Already a member of the room.'
+//           ) : (
+//             <Button variant="primary" onClick={() => joinRoom(id)}>
+//               Join
+//             </Button>
+//           )}
+//         </Card.Body>
+//       </Card>
+//       <LoadMessages roomInfo={props.roomInfo} />
+//       <SendMessage roomInfo={props.roomInfo} />
+//     </>
+//   );
+// }
 
-  return (
-    <form onSubmit={createNewChatRoom}>
-      <h4>Create New Chat Room</h4>
-      <input value={roomName} onChange={(e) => setRoomName(e.target.value)} />
-      <button type="submit">Create Room</button>
-    </form>
-  );
-}
+// function SendMessage(props) {
+//   const { name, id } = props.roomInfo;
+//   const [message, setMessage] = useState('');
 
-function LoadChatRooms() {
-  const chatRoomsRef = firestore.collection('chatRooms');
-  const query = chatRoomsRef.orderBy('createdAt').limit(25);
-  const [chatRooms] = useCollectionData(query, { idField: 'id' });
+//   const createMessage = async (e) => {
+//     const { uid, displayName } = auth.currentUser;
+//     const messagesRef = firestore.collection('messages');
+//     e.preventDefault();
 
-  return (
-    <>
-      {chatRooms &&
-        chatRooms.map((room) => <ChatRoom key={room.id} roomInfo={room} />)}
-    </>
-  );
-}
+//     await messagesRef
+//       .add({
+//         text: message,
+//         author: {
+//           uid,
+//           displayName,
+//         },
+//         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+//         roomId: id,
+//       })
+//       .then(async (result) => {
+//         const chatRoomsRef = firestore.collection('chatRooms').doc(id);
+//         await chatRoomsRef.update({
+//           messages: firebase.firestore.FieldValue.arrayUnion(result.id),
+//         });
+//       });
 
-function ChatRoom(props) {
-  const { name, creator, id, users } = props.roomInfo;
-  const { uid } = auth.currentUser;
-  const joinRoom = async (id) => {
-    console.log('Joinging room: ' + id);
-    const chatRoomRef = firestore.collection('chatRooms').doc(id);
-    await chatRoomRef.update(
-      {
-        users: firebase.firestore.FieldValue.arrayUnion(uid),
-      },
-      { merge: true }
-    );
-  };
+//     setMessage('');
+//   };
 
-  return (
-    <>
-      <Card style={{ width: '18rem' }}>
-        <Card.Body>
-          <Card.Title>{name}</Card.Title>
-          <Card.Subtitle className="mb-2 text-muted">
-            Created By: {creator.displayName}
-          </Card.Subtitle>
-          <Card.Text>Some for of description</Card.Text>
-          {users.includes(uid) ? (
-            'Already a member of the room.'
-          ) : (
-            <Button variant="primary" onClick={() => joinRoom(id)}>
-              Join
-            </Button>
-          )}
-        </Card.Body>
-      </Card>
-      <LoadMessages roomInfo={props.roomInfo} />
-      <SendMessage roomInfo={props.roomInfo} />
-    </>
-  );
-}
+//   return (
+//     <form onSubmit={createMessage}>
+//       <h4>Send Message to: {name}</h4>
+//       <input value={message} onChange={(e) => setMessage(e.target.value)} />
+//       <button type="submit">Send</button>
+//     </form>
+//   );
+// }
 
-function SendMessage(props) {
-  const { name, id } = props.roomInfo;
-  const [message, setMessage] = useState('');
+// function LoadMessages(props) {
+//   const { id, users } = props.roomInfo;
+//   const { uid } = auth.currentUser;
+//   const messagesRef = firestore.collection('messages');
+//   const query = messagesRef.orderBy('createdAt');
+//   const [messages] = useCollectionData(query, { idField: 'id' });
 
-  const createMessage = async (e) => {
-    const { uid, displayName } = auth.currentUser;
-    const messagesRef = firestore.collection('messages');
-    e.preventDefault();
-
-    await messagesRef
-      .add({
-        text: message,
-        author: {
-          uid,
-          displayName,
-        },
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        roomId: id,
-      })
-      .then(async (result) => {
-        const chatRoomsRef = firestore.collection('chatRooms').doc(id);
-        await chatRoomsRef.update({
-          messages: firebase.firestore.FieldValue.arrayUnion(result.id),
-        });
-      });
-
-    setMessage('');
-  };
-
-  return (
-    <form onSubmit={createMessage}>
-      <h4>Send Message to: {name}</h4>
-      <input value={message} onChange={(e) => setMessage(e.target.value)} />
-      <button type="submit">Send</button>
-    </form>
-  );
-}
-
-function LoadMessages(props) {
-  const { id, users } = props.roomInfo;
-  const { uid } = auth.currentUser;
-  const messagesRef = firestore.collection('messages');
-  const query = messagesRef.orderBy('createdAt');
-  const [messages] = useCollectionData(query, { idField: 'id' });
-
-  return (
-    <>
-      {users.includes(uid) &&
-        messages &&
-        messages.map((message) =>
-          message.roomId === id ? (
-            <>
-              {message.text}
-              <br />
-            </>
-          ) : null
-        )}
-    </>
-  );
-}
+//   return (
+//     <>
+//       {users.includes(uid) &&
+//         messages &&
+//         messages.map((message) =>
+//           message.roomId === id ? (
+//             <>
+//               {message.text}
+//               <br />
+//             </>
+//           ) : null
+//         )}
+//     </>
+//   );
+// }
 
 export default App;
