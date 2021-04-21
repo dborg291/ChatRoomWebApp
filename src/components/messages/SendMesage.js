@@ -4,7 +4,7 @@ export default function SendMesage(props) {
   const { auth, firebase, firestore } = props;
   const { name, id, users } = props.roomInfo;
   const [message, setMessage] = useState('');
-  const { uid, displayName } = auth.currentUser;
+  const { uid, displayName, photoURL } = auth.currentUser;
 
   const createMessage = async (e) => {
     const messagesRef = firestore.collection('messages');
@@ -16,6 +16,7 @@ export default function SendMesage(props) {
         author: {
           uid,
           displayName,
+          photoURL,
         },
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         roomId: id,

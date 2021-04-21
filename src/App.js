@@ -3,14 +3,14 @@ import './App.css';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
-import { Card } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import constants from './constants';
 
 import SignIn from './components/auth/SignIn';
 import SignOut from './components/auth/SignOut';
-import NewChatRoomForm from './components/chatRoom/NewChatRoomForm';
-import LoadChatRooms from './components/chatRoom/LoadChatRooms';
+// import NewChatRoomForm from './components/chatRoom/NewChatRoomForm';
+
+import Home from './screens/home/Home'
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
@@ -38,19 +38,11 @@ function App() {
       </header>
       <section>
         {user ? (
-          <>
-            <h4>Current Chat Rooms</h4>
-            <LoadChatRooms
-              auth={auth}
-              firebase={firebase}
-              firestore={firestore}
-            />
-            <NewChatRoomForm
-              auth={auth}
-              firebase={firebase}
-              firestore={firestore}
-            />
-          </>
+          <Home
+            auth={auth}
+            firebase={firebase}
+            firestore={firestore}
+          />
         ) : (
           <div className="welcome">
             <h1>

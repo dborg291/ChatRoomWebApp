@@ -1,0 +1,14 @@
+.message-header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.message-name{
+  color: #3498DB;
+}
+
+.message-date{
+  padding-left: 16px;
+  color: #72767D;
+}

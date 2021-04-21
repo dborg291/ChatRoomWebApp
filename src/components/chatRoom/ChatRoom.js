@@ -1,14 +1,17 @@
+import './ChatRoom.css'
 import React from 'react';
 import { Button, Card } from 'react-bootstrap';
-import LoadMessages from '../messages/LoadMessages';
-import SendMessage from '../messages/SendMesage';
+
 
 export default function ChatRoom(props) {
   const { auth, firebase, firestore } = props;
-  const { name, creator, id, users } = props.roomInfo;
+  const { name, id, users } = props.roomInfo;
   const { uid } = auth.currentUser;
+
   const joinRoom = async (id) => {
     console.log('Joinging room: ' + id);
+    localStorage.setItem('currentRoom', id);
+    props.setCurrentRoom(id);
     const chatRoomRef = firestore.collection('chatRooms').doc(id);
     await chatRoomRef.update(
       {
@@ -18,17 +21,27 @@ export default function ChatRoom(props) {
     );
   };
 
+  const switchRoom = (id) => {
+    localStorage.setItem('currentRoom', id);
+    props.setCurrentRoom(id);
+  }
+
   return (
     <>
-      <Card style={{ width: '18rem' }}>
+      <br />
+      <Card className="chat-room-card" >
         <Card.Body>
           <Card.Title>{name}</Card.Title>
           <Card.Subtitle className="mb-2 text-muted">
-            Created By: {creator.displayName}
+            Current Member Count: {users.length}
           </Card.Subtitle>
-          <Card.Text>Description Here</Card.Text>
           {users.includes(uid) ? (
-            'Already a member of the room.'
+            localStorage.getItem('currentRoom') === id ? (
+              <>Current Room</>
+            ) : (
+              < Button variant="primary" onClick={() => switchRoom(id)}>
+                Switch Room
+              </Button>)
           ) : (
             <Button variant="primary" onClick={() => joinRoom(id)}>
               Join
@@ -36,17 +49,6 @@ export default function ChatRoom(props) {
           )}
         </Card.Body>
       </Card>
-      <LoadMessages
-        roomInfo={props.roomInfo}
-        auth={auth}
-        firestore={firestore}
-      />
-      <SendMessage
-        roomInfo={props.roomInfo}
-        auth={auth}
-        firebase={firebase}
-        firestore={firestore}
-      />
     </>
   );
 }
