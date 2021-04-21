@@ -7,6 +7,7 @@ export default function NewChatRoomForm(props) {
   const createNewChatRoom = async (e) => {
     const { uid, displayName } = auth.currentUser;
     const chatRoomsRef = firestore.collection('chatRooms');
+    props.handleClose();
     e.preventDefault();
 
     await chatRoomsRef.add({
