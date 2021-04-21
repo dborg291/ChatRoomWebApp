@@ -3,6 +3,7 @@ import './App.css';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import { Card } from 'react-bootstrap';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import constants from './constants';
 
@@ -51,7 +52,12 @@ function App() {
             />
           </>
         ) : (
-          <SignIn auth={auth} firebase={firebase} />
+          <div className="welcome">
+            <h1>
+              Chat Room Web App
+            </h1>
+            <SignIn auth={auth} firebase={firebase} />
+          </div>
         )}
       </section>
     </div>

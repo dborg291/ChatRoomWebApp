@@ -26,7 +26,7 @@ export default function ChatRoom(props) {
           <Card.Subtitle className="mb-2 text-muted">
             Created By: {creator.displayName}
           </Card.Subtitle>
-          <Card.Text>Some for of description</Card.Text>
+          <Card.Text>Description Here</Card.Text>
           {users.includes(uid) ? (
             'Already a member of the room.'
           ) : (

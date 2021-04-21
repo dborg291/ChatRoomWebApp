@@ -16,7 +16,7 @@ export default function LoadMessages(props) {
         messages.map((message) =>
           message.roomId === id ? (
             <>
-              {message.text}
+              {message.author.displayName}: {message.text}
               <br />
             </>
           ) : null
