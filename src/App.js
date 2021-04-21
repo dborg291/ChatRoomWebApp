@@ -8,8 +8,9 @@ import constants from './constants';
 
 import SignIn from './components/auth/SignIn';
 import SignOut from './components/auth/SignOut';
-import NewChatRoomForm from './components/chatRoom/NewChatRoomForm';
-import LoadChatRooms from './components/chatRoom/LoadChatRooms';
+// import NewChatRoomForm from './components/chatRoom/NewChatRoomForm';
+
+import Home from './screens/home/Home'
 
 if (!firebase.apps.length) {
   firebase.initializeApp({
@@ -37,21 +38,18 @@ function App() {
       </header>
       <section>
         {user ? (
-          <>
-            <h4>Current Chat Rooms</h4>
-            <LoadChatRooms
-              auth={auth}
-              firebase={firebase}
-              firestore={firestore}
-            />
-            <NewChatRoomForm
-              auth={auth}
-              firebase={firebase}
-              firestore={firestore}
-            />
-          </>
+          <Home
+            auth={auth}
+            firebase={firebase}
+            firestore={firestore}
+          />
         ) : (
-          <SignIn auth={auth} firebase={firebase} />
+          <div className="welcome">
+            <h1>
+              Chat Room Web App
+            </h1>
+            <SignIn auth={auth} firebase={firebase} />
+          </div>
         )}
       </section>
     </div>

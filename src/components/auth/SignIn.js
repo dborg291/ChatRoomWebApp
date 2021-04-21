@@ -1,4 +1,6 @@
 import React from 'react';
+import { Button } from 'react-bootstrap'
+import { FcGoogle } from 'react-icons/fc'
 
 export default function SignIn(props) {
   const { auth, firebase } = props;
@@ -22,10 +24,10 @@ export default function SignIn(props) {
   };
 
   return (
-    <>
-      <button className="sign-in" onClick={signInWithGoogle}>
-        Sign in with Google
-      </button>
-    </>
+    <Button className="sign-in" onClick={signInWithGoogle} variant="light">
+      <FcGoogle />
+      {' '}
+      Sign in with Google
+    </Button>
   );
 }

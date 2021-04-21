@@ -18,6 +18,7 @@ export default function LoadChatRooms(props) {
             auth={auth}
             firebase={firebase}
             firestore={firestore}
+            setCurrentRoom={props.setCurrentRoom}
           />
         ))}
     </>

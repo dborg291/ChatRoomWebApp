@@ -1,0 +1,18 @@
+.side-bar{
+  background-color: #2F3136;
+  color: #FFFFFF;
+  min-height: 100vh;
+}
+
+.home-body{
+  background-color: #36393F;
+  color: #FFFFFF;
+  min-height: 100vh;
+}
+
+/* 
+White: FFFFFF
+Cornflower Blue: 7289DA
+Cadet Grey: 2F3136
+Jet:  36393F
+Charleston Green: 23272A */
