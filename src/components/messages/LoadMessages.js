@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import SendMessage from './SendMesage'
 import Avatar from 'react-avatar';
 import { Col, Row } from 'react-bootstrap'
@@ -15,6 +15,8 @@ export default function LoadMessages(props) {
   const query = messagesRef.orderBy('createdAt');
   const [messages] = useCollectionData(query, { idField: 'id' });
 
+  const dummy = useRef();
+
   return (
     <>
       {users.includes(uid) &&
@@ -22,7 +24,7 @@ export default function LoadMessages(props) {
         messages.map((message) =>
           message.roomId === id ? (
             <div key={message.id}>
-              <Row>
+              <Row style={{ overflow: 'hidden' }}>
                 <Col md="auto">
                   <Avatar src={message.author.photoURL} round="50px" size="40px" />
                 </Col>
@@ -45,11 +47,13 @@ export default function LoadMessages(props) {
             </div>
           ) : null
         )}
+      <div ref={dummy}></div>
       <SendMessage
         roomInfo={props.roomInfo}
         auth={auth}
         firebase={firebase}
         firestore={firestore}
+        refDiv={dummy}
       />
     </>
   );

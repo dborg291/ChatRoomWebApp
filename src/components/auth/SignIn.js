@@ -24,7 +24,7 @@ export default function SignIn(props) {
   };
 
   return (
-    <Button className="sign-in" onClick={signInWithGoogle} variant="light">
+    <Button className="sign-in" onClick={signInWithGoogle} variant="dark">
       <FcGoogle />
       {' '}
       Sign in with Google
