@@ -1,5 +1,12 @@
 .chat-room-card{
   padding: 0px;
   background-color: #202225;
-  margin-left: 15px;
+  padding-left: 15px;
+}
+
+.room-buttons{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
 }

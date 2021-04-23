@@ -1,5 +1,8 @@
 import './ChatRoom.css'
 import React from 'react';
+import { BiMessageAltDetail, BiMessageAltEdit } from 'react-icons/bi'
+import { ImEnter } from 'react-icons/im'
+import { ImExit } from 'react-icons/im'
 import { Button, Card } from 'react-bootstrap';
 
 
@@ -9,7 +12,6 @@ export default function ChatRoom(props) {
   const { uid } = auth.currentUser;
 
   const joinRoom = async (id) => {
-    console.log('Joinging room: ' + id);
     localStorage.setItem('currentRoom', id);
     props.setCurrentRoom(id);
     const chatRoomRef = firestore.collection('chatRooms').doc(id);
@@ -20,6 +22,20 @@ export default function ChatRoom(props) {
       { merge: true }
     );
   };
+
+  const leaveRoom = async (id) => {
+    if (id === localStorage.getItem('currentRoom')) {
+      localStorage.setItem('currentRoom', 'NO_ROOM');
+      props.setCurrentRoom('NO_ROOM');
+    }
+    const chatRoomRef = firestore.collection('chatRooms').doc(id);
+    await chatRoomRef.update(
+      {
+        users: firebase.firestore.FieldValue.arrayRemove(uid),
+      },
+      { merge: true }
+    );
+  }
 
   const switchRoom = (id) => {
     localStorage.setItem('currentRoom', id);
@@ -37,16 +53,30 @@ export default function ChatRoom(props) {
           </Card.Subtitle>
           {users.includes(uid) ? (
             localStorage.getItem('currentRoom') === id ? (
-              <>Current Room</>
+              <div className='room-buttons'>
+                <BiMessageAltEdit size={26} color='43B581' />
+                < Button variant="dark" onClick={() => leaveRoom(id)}>
+                  <ImExit size={26} />
+                </Button>
+              </div>
+
             ) : (
-              < Button variant="primary" onClick={() => switchRoom(id)}>
-                Switch Room
-              </Button>)
+              <div className='room-buttons'>
+                < Button variant="dark" onClick={() => switchRoom(id)}>
+                  <BiMessageAltDetail size={26} />
+                </Button>
+                < Button variant="dark" onClick={() => leaveRoom(id)}>
+                  <ImExit size={26} />
+                </Button>
+              </div>)
           ) : (
-            <Button variant="primary" onClick={() => joinRoom(id)}>
-              Join
-            </Button>
+            <div className='room-buttons'>
+              <Button variant="dark" onClick={() => joinRoom(id)}>
+                <ImEnter size={22} />
+              </Button>
+            </div>
           )}
+
         </Card.Body>
       </Card>
     </>

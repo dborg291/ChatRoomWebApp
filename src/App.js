@@ -7,8 +7,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import constants from './constants';
 
 import SignIn from './components/auth/SignIn';
-import SignOut from './components/auth/SignOut';
-// import NewChatRoomForm from './components/chatRoom/NewChatRoomForm';
+
 
 import Home from './screens/home/Home'
 
@@ -33,9 +32,6 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <SignOut auth={auth} />
-      </header>
       <section>
         {user ? (
           <Home
