@@ -9,7 +9,7 @@ export default function LoadChatRooms(props) {
   const [chatRooms] = useCollectionData(query, { idField: 'id' });
 
   return (
-    <>
+    <div style={{overflowY:'auto', maxHeight: '80vh'}}>
       {chatRooms &&
         chatRooms.map((room) => (
           <ChatRoom
@@ -21,6 +21,6 @@ export default function LoadChatRooms(props) {
             setCurrentRoom={props.setCurrentRoom}
           />
         ))}
-    </>
+    </div>
   );
 }
