@@ -1,13 +1,15 @@
 .side-bar{
   background-color: #2F3136;
   color: #FFFFFF;
-  min-height: 100vh;
+  max-height: 100vh;
+  min-width: 25vh;
 }
 
 .home-body{
   background-color: #36393F;
   color: #FFFFFF;
   min-height: 100vh;
+  min-width: 45vh;
 }
 
 .new-chat-room-button{

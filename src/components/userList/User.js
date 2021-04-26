@@ -10,7 +10,7 @@ export default function User(props) {
     <div className="user-card">
       <Avatar src={photoURL} round="50px" size="40px" />
       <Card.Text>
-        {displayName}
+        &nbsp; {displayName}
       </Card.Text>
     </div>
   )

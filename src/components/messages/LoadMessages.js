@@ -19,6 +19,7 @@ export default function LoadMessages(props) {
 
   return (
     <>
+    <div style={{height: '95%', overflowY: 'scroll'}}>
       {users.includes(uid) &&
         messages &&
         messages.map((message) =>
@@ -47,14 +48,17 @@ export default function LoadMessages(props) {
             </div>
           ) : null
         )}
+      </div>
       <div ref={dummy}></div>
-      <SendMessage
-        roomInfo={props.roomInfo}
-        auth={auth}
-        firebase={firebase}
-        firestore={firestore}
-        refDiv={dummy}
-      />
+      <div style={{height: '5%', minWidth: '50vh', bottom: 10}}>
+        <SendMessage
+          roomInfo={props.roomInfo}
+          auth={auth}
+          firebase={firebase}
+          firestore={firestore}
+          refDiv={dummy}
+        />
+      </div>
     </>
   );
 }

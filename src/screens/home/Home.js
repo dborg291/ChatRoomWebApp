@@ -25,7 +25,7 @@ export default function Home(props) {
   return (
     <Row style={{ width: '100vW', }}>
       <Col xs={2} className="side-bar">
-        <Container sticky='top'>
+        <Container sticky='top' style={{marginTop: 100}}>
           <LoadChatRooms
             auth={auth}
             firebase={firebase}
@@ -52,7 +52,9 @@ export default function Home(props) {
               />
             </Modal.Body>
           </Modal>
-          <SignOut auth={auth} />
+          <div style={{position: 'absolute', minWidth: '25vh', top: 20}}>
+            <SignOut auth={auth} />
+          </div>
         </Container>
       </Col>
 
