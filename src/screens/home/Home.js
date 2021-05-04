@@ -61,7 +61,7 @@ export default function Home(props) {
       <Col className="home-body">
         {currentRoom === "NO_ROOM" ? (
           <div className="button-container">
-            <h1>Join an exsisting chat room or make a new one</h1>
+            <h1>Join an existing chat room or make a new one</h1>
           </div>
         ) : chatRoom === undefined || chatRoom.length === 0 ? (null) : //loading went here
           <div style={{ height: '100vH', position: 'relative', overflowY: 'auto' }}>
